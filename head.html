@@ -25,8 +25,8 @@
 			<div id="codeDiv" class="col s4">
 				<div>
 					<h5>CODE</h5>
-					<button class="btn small">OPEN FILE</button>
-					<textarea id="codeText"></textarea>
+					<input id="codeFile" type="file" onclick="clearTable()" />
+					<textarea id="codeText" onfocus="clearTable()"></textarea>
 				</div>
 			</div>
 			<div id="lexemeDiv" class="col s4">
@@ -74,235 +74,225 @@
 
 	<script>
 		var executeButton = document.getElementById("executeButton");
-		var lexemeTable = document.getElementById("lexemeTable");
-		executeButton.onclick = function() {
-		var code = document.getElementById("codeText").value;
 
-			var tokens = code.split("\n");
-			for(var i = 0; i<tokens.length; i++){
-				if(i === 0 && tokens[0] === "HAI"){
+		function clearTable() {
+			var lexemeTable = document.getElementById("lexemeTable");
+			var newtbody = document.createElement("tbody");
+			newtbody.id = "lexemeTable";
+			lexemeTable.parentNode.replaceChild(newtbody, lexemeTable);
+		}
+
+		function loadCode(e) {
+			var file = e.target.files[0];
+			if (!file) {
+				alert("Can not read file");
+			}
+			var reader = new FileReader();
+ 			reader.onload = function(e) {
+				var contents = e.target.result;
+				document.getElementById("codeText").value = contents;
+			};
+  			reader.readAsText(file);
+		}
+
+		document.getElementById('codeFile').addEventListener('change', loadCode, false);
+
+		executeButton.onclick = function() {
+			var lexemeTable = document.getElementById("lexemeTable");
+			var code = document.getElementById("codeText").value;
+			clearTable();
+			var lexemeTable = document.getElementById("lexemeTable");
+
+			function addToLexemeTable(lexeme, description) {
 					var tr = document.createElement("tr");
+
 					var tdLexeme = document.createElement("td");
-					var tnLexeme = document.createTextNode(tokens[0]);
+					var tnLexeme = document.createTextNode(lexeme);
 					tdLexeme.appendChild(tnLexeme);
+
 					var tdDesc = document.createElement("td");
-					var tnDesc = document.createTextNode("Delimeter to mark the start of the program");
+					var tnDesc = document.createTextNode(description);
 					tdDesc.appendChild(tnDesc);
+
 					tr.appendChild(tdLexeme);
 					tr.appendChild(tdDesc);
 
 					lexemeTable.appendChild(tr);
 				}
-				if(i === tokens.length - 1){
-					if(tokens[i] === "KTHXBYE"){
-						var tr = document.createElement("tr");
-						var tdLexeme = document.createElement("td");
-						var tnLexeme = document.createTextNode(tokens[i]);
-						tdLexeme.appendChild(tnLexeme);
-						var tdDesc = document.createElement("td");
-						var tnDesc = document.createTextNode("Delimeter to mark the end of the program");
-						tdDesc.appendChild(tnDesc);
-						tr.appendChild(tdLexeme);
-						tr.appendChild(tdDesc);
 
-						lexemeTable.appendChild(tr);
-					}
+			var tokens = code.split("\n");
+
+			// LEXEMES AND DESCRIPTION
+
+			const HAIlex = "HAI";
+			const HAIdesc = "Delimeter to mark the start of the program";
+			const KTHXBYElex = "KTHXBYE";
+			const KTHXBYEdesc = "Delimeter to mark the end of the program";
+			const BTWlex = "BTW";
+			const BTWdesc = "Indicates the start of a single-line comment";
+			const OBTWlex = "BTW";
+			const OBTWdesc = "Indicates the start of a multi-line comment";
+			const TLDRlex = "TLDR";
+			const TLDRdesc = "Indicates the end of a multi-line comment"
+			const IHASAlex = "I HAS A";
+			const IHASAdesc = "Declares a variable without an initial value";
+			const ITZlex = "ITZ";
+			const ITZdesc = "Assigns a value to a variable immediately after its declaration";
+			const Rlex = "R";
+			const Rdesc = "Assigns a value to a variable";
+			const MAEKlex = "MAEK";
+			const MAEKdesc = "Operator that explicitly casts an expression’s value";
+			const ISNOWAlex = "IS NOW A";
+			const ISNOWAdesc = "Explicitly re-cast a variable";
+			const VISIBLElex = "VISIBLE";
+			const VISIBLEdesc = "Prints a string to the output stream";
+			const GIMMEHlex = "GIMMEH";
+			const GIMMEHdesc = "Reads a string from the input stream into the variable";
+			const SMOOSHlex = "SMOOSH";
+			const SMOOSHdesc = "Concatenates the given YARNs";
+			const MKAYlex = "MKAY";
+			const MKAYdesc = "Delimiter to mark the end of a list of arguments";
+			const ANlex = "AN";
+			const ANdesc = "Indicates that there are more arguments for a certain operation";
+			const BOTHSAEMlex = "BOTH SAEM";
+			const BOTHSAEMdesc = "Comparison operator for equality";
+			const DIFFRINTlex = "DIFFRINT";
+			const DIFFRINTdesc = "Comparison operator for inequality"
+			const BIGGROFlex = "BIGGR OF";
+			const BIGGROFdesc = "Comparison operator that returns the argument with the larger/ largest value from the list arguments";
+			const SMALLROFlex = "SMALLR OF";
+			const SMALLROFdesc = "Comparison operator that returns the argument with the smaller/ smallest value from the list arguments";
+
+			const WTFlex = "WTF?";
+			const OIClex = "OIC";
+
+			const WINlex = "WIN";
+			const WINdesc = "Boolean value for true";
+			const FAILlex = "FAIL";
+			const FAILdesc = "Boolean value for false";
+
+			// LITERALS AND DELIMITERS
+
+			const YARNdesc = "String Literal";
+			const YARNdelimiter = "\"";
+			const YARNdelimiterdesc = "String Delimiter"
+			const NUMBRdesc = "Integer Literal"
+			const NUMBARdesc = "Floating-point Literal";
+
+			const COMMENTLiteraldesc = "Single-line comment";
+			const VARIABLEdesc = "Variable Expression";
+
+			// REGEX
+
+			const BTWpatt = /^BTW .*$/;
+			const OBTWpatt = /^OBTW .*TLDR$/m;
+			const IHASApatt = /^I HAS A (\w\S*)$/;
+			const VARIABLEpatt = /^\D$/;
+			const IHASAITZpatt = /(I HAS A) (\w\S*) (ITZ) ("?.*"?|\S+)$/;
+			const VISIBLEpatt = /^VISIBLE ("?.*"?|\w+)$/;
+			const GIMMEHpatt = /^GIMMEH \w*$/;
+			const ITZpatt = /^ITZ \w$/;
+			const Rpatt = /^\w* R ("?.*"?|\w*)$/;
+			const SMOOSHMKAYpatt = /^SMOOSH ("?.*"?|\w+) (AN ("?.*"?|\w+))+$/;
+			const COMPARISONpatt = /^(BOTH SAEM|DIFFRINT|BIGGR OF|SMALLR OF) ("?.*"?|\w+) (AN) ("?.*"?|\w+)$/;
+			const WTFpatt = /^WTF\?$/;
+			const OMGpatt = /^OMG ("?.*"?|\w+)$/;	
+			const YARNpatt = /".*"/;
+			const NUMBRpatt = /^-?\d+$/;
+			const NUMBARpatt = /^-?\d+.\d+$/;
+			const WINpatt = /^WIN$/;
+			const FAILpatt = /^FAIL$/;
+			const BOTHSAEMpatt = /BOTH SAEM/;
+			const DIFFRINTpatt = /DIFFRINT/;
+			const BIGGROFpatt = /BIGGR OF/;
+			const SMALLROFpatt = /SMALLR OF/;
+			const ANpatt = /AN/;
+
+
+			for(var i = 0; i<tokens.length; i++){
+				if(i === 0 && tokens[0] === "HAI"){
+					addToLexemeTable(HAIlex, HAIdesc);
 				}
-				if(i !== 0 && i !== tokens.length){
-					// patterns
-
-					const BTWpatt = /^BTW .*$/;
-					const OBTWpatt = /^OBTW .*TLDR$/m;
-					const VAR_DEC = /^I HAS A \w+$/;
-					const VARIABLE_NAME = /^\D$/;
-					const VAR_DEC_WITH_INIT_LITERAL = /I HAS A \w+ ITZ .+$/;
-					const VISIBLEpatt = /^VISIBLE ("?.*"?|\w*)$/;
-					const GIMMEHpatt = /^GIMMEH$/;
-					
-					const YARNLiteral = /".*"/;
-					const NUMBRLiteral = /\d+/;
-					const NUMBARLiteral = /\d+.\d+/;
-					const TROOFTrueLiteral = /WIN/;
-					const TROOFFalseLiteral = /FALSE/;
-
-					const EQUALITY_KEYWORD = /BOTH SAEM/;
-					const INEQUALITY_KEYWORD = /DIFFRINT/;
-					const MORE_ARGS = /AN/;
-					const EQUALITY = /BOTH SAEM \w+ AN \w+/;
-					const EQUALITY_MANY_ARGS = /BOTH SAEM \w+ AN \w (AN \w)* MKAY/;
-					const INEQUALITY = /DIFFRINT \w+ AN \w+/;
-					const INEQUALITY_MANY_ARGS = /DIFFRINT \w+ AN \w (AN \w)* MKAY/;
-
+				if (i === tokens.length - 1 && tokens[i] === "KTHXBYE") {
+					addToLexemeTable(KTHXBYElex, KTHXBYEdesc);
+				}
+				if (i !== 0 && i !== tokens.length){
 					if (tokens[i].match(VISIBLEpatt)) {
-						var tr1 = document.createElement("tr");
-						var tr2 = document.createElement("tr");
+						addToLexemeTable(VISIBLElex, VISIBLEdesc);
 
-						var tdLexeme = document.createElement("td");
-						var tnLexeme = document.createTextNode("VISIBLE");
-						tdLexeme.appendChild(tnLexeme);
+						var args = tokens[i].slice(VISIBLElex.length);
 
-						var tdDesc = document.createElement("td");
-						var tnDesc = document.createTextNode("Prints a string to the output stream");
-						tdDesc.appendChild(tnDesc);
+						if(args.match(YARNpatt)){
+							args = args.substring(1, (args.length-1));
 
-						var toShow = tokens[i].slice(8);
-						var tdLiteral = document.createElement("td");
-
-						var tdLiDesc = document.createElement("td");
-
-						lexemeTable.appendChild(tr1);
-
-						if(toShow.match(YARNLiteral)){
-							toShow = toShow.substring(1, (toShow.length-1));
-							var tnLiteral = document.createTextNode(toShow);
-							tdLiteral.appendChild(tnLiteral);
-							var tnLiDesc = document.createTextNode("String Literal");
-							tdLiDesc.appendChild(tnLiDesc);
-
-							var tdQuote = document.createElement("td");
-							var tnQuote = document.createTextNode("\"");
-							tdQuote.appendChild(tnQuote);
-							var tdQuDesc = document.createElement("td");
-							var tnQuDesc = document.createTextNode("String Delimiter");
-							tdQuDesc.appendChild(tnQuDesc);
-							var tr3 = document.createElement("tr");
-
-							tr1.appendChild(tdLexeme);
-							tr1.appendChild(tdDesc);
-							tr2.appendChild(tdLiteral);
-							tr2.appendChild(tdLiDesc);
-							tr3.appendChild(tdQuote);
-							tr3.appendChild(tdQuDesc);
-
-							var tr4 = tr3.cloneNode(true);
-
-							lexemeTable.appendChild(tr3);
-							lexemeTable.appendChild(tr2);
-							lexemeTable.appendChild(tr4);
+							addToLexemeTable(YARNdelimiter, YARNDelimiterdesc);
+							addToLexemeTable(args, YARNdesc);
+							addToLexemeTable(YARNDelimiter, YARNDelimiterdesc);
 						}
-						else{
-							var tnLiteral = document.createTextNode(toShow);
-							tdLiteral.appendChild(tnLiteral);
-							var tnLiDesc = document.createTextNode("Variable Expression");
-							tdLiDesc.appendChild(tnLiDesc);
-
-							tr1.appendChild(tdLexeme);
-							tr1.appendChild(tdDesc);
-							tr2.appendChild(tdLiteral);
-							tr2.appendChild(tdLiDesc);
-
-							lexemeTable.appendChild(tr2);
-						}
+						else addToLexemeTable(args, VARIABLEdesc);
 
 					}
 					else if (tokens[i].match(GIMMEHpatt)) {
-						var tr = document.createElement("tr");
-						var tdLexeme = document.createElement("td");
-						var tnLexeme = document.createTextNode(tokens[i]);
-						tdLexeme.appendChild(tnLexeme);
-						var tdDesc = document.createElement("td");
-						var tnDesc = document.createTextNode("Reads a string from the input stream into the variable");
-						tdDesc.appendChild(tnDesc);
-						tr.appendChild(tdLexeme);
-						tr.appendChild(tdDesc);
+						addToLexemeTable(GIMMEHlex, GIMMEHdesc);
 
-						lexemeTable.appendChild(tr);
+						var args = tokens[i].slice(GIMMEHlex.length);
+
+						if(args.match(YARNpatt)){
+							args = args.substring(1, (args.length-1));
+
+							addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+							addToLexemeTable(args, YARNdesc);
+							addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+						}
+						else addToLexemeTable(args, VARIABLEdesc);
 					}
 					else if (tokens[i].match(BTWpatt)) {
-						var tr1 = document.createElement("tr");
-						var tdLexeme = document.createElement("td");
-						var tnLexeme = document.createTextNode("BTW");
-						tdLexeme.appendChild(tnLexeme);
+						addToLexemeTable(BTWlex);
 
-						var tdDesc = document.createElement("td");
-						var tnDesc = document.createTextNode("Indicates the start of a single-line comment");
-						tdDesc.appendChild(tnDesc);
-
-
-						var toShow = tokens[i].slice(4);
-						var tr2 = document.createElement("tr");
-						var tdLiteral = document.createElement("td");
-						var tnLiteral = document.createTextNode(toShow);
-						tdLiteral.appendChild(tnLiteral);
-
-
-						var tr2 = document.createElement("tr");
-						var tdLiDesc = document.createElement("td");
-						var tnLiDesc = document.createTextNode("Single-line comment");
-						tdLiDesc.appendChild(tnLiDesc);
-
-						tr1.appendChild(tdLexeme);
-						tr1.appendChild(tdDesc);
-						tr2.appendChild(tdLiteral);
-						tr2.appendChild(tdLiDesc);
-
-						lexemeTable.appendChild(tr1);
-						lexemeTable.appendChild(tr2);
+						var args = tokens[i].slice(GIMMEHlex.length);
+						addToLexemeTable(args, COMMENTLiteraldesc);
 					}
-					else if (tokens[i].match(EQUALITY)) {
-						var tr1 = document.createElement("tr");
-						var tr2 = document.createElement("tr");
-						var tr3 = document.createElement("tr");
-						var tr4 = document.createElement("tr");
+					else if (tokens[i].match(COMPARISONpatt)) {
+						var args = tokens[i].match(COMPARISONpatt);
+						
+						if (args[1].match(BOTHSAEMlex)) addToLexemeTable(BOTHSAEMlex, BOTHSAEMdesc);
+						else if (args[1].match(DIFFRINTlex)) addToLexemeTable(DIFFRINTlex, DIFFRINTdesc);
+						else if (args[1].match(BIGGROFlex)) addToLexemeTable(BIGGROFlex, BIGGROFdesc);
+						else if (args[1].match(SMALLROFlex)) addToLexemeTable(SMALLROFlex, SMALLROFdesc);
 
-						var tdLexeme = document.createElement("td");
-						var tnLexeme = document.createTextNode("BOTH SAEM");
-						tdLexeme.appendChild(tnLexeme);
+						for (var j = 2; j < args.length; j++) {
+							if(args[j].match(YARNpatt)){
+								var yarn = args[j].substring(1, (args.length-1));
 
-						var tdDesc = document.createElement("td");
-						var tnDesc = document.createTextNode("Comparison operator for equality");
-						tdDesc.appendChild(tnDesc);
-
-						tr1.appendChild(tdLexeme);
-						tr1.appendChild(tdDesc);
-
-						lexemeTable.appendChild(tr1);
-
-						var toShow = tokens[i].slice(9);
-						toShow = toShow.split(" ");
-
-						for (var i = 0; i < toShow.length; i++) {
-							var tdDesc = document.createElement("td");
-							if (toShow[i].match(YARNLiteral)) {
-								var tnDesc = 
+								addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+								addToLexemeTable(yarn, YARNdesc);
+								addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
 							}
-							tdDesc.appendChild(tnDesc);
+							else if(args[j].match(NUMBRpatt)) addToLexemeTable(args[j], NUMBRdesc);
+							else if(args[j].match(NUMBARpatt)) addToLexemeTable(args[j], NUMBRdesc);
+							else if(args[j].match(WINpatt))	addToLexemeTable(WINlex, WINdesc)
+							else if(args[j].match(FAILpatt)) addToLexemeTable(FAILlex, FAILdesc)
+							else if(args[j].match(ANpatt)) addToLexemeTable(ANlex, ANdesc);
+							else addToLexemeTable(args[j], VARIABLEdesc);
 						}
 
 					}
-					else if (tokens[i].match(INEQUALITY)) {
-						
+					else if (tokens[i].match(IHASApatt)) {
+						addToLexemeTable(IHASAlex, IHASAdesc);
+						args = tokens[i].slice(IHASAlex.length);
+						addToLexemeTable(args, VARIABLEdesc);
 					}
-					else if (tokens[i].match()) {
-						
+					else if (tokens[i].match(IHASAITZpatt)) {
+						var args = tokens[i].match(IHASAITZpatt);
+						addToLexemeTable(IHASAlex, IHASAdesc);
+						addToLexemeTable(args[2], VARIABLEdesc);
+						addToLexemeTable(args[3], ITZdesc);
+						if (args[4].match(NUMBRpatt)) addToLexemeTable(args[4], NUMBRdesc);
+						else if (args[4].match(NUMBARpatt)) addToLexemeTable(args[4], NUMBARdesc);
+						else if (args[4].match(WINpatt)) addToLexemeTable(args[4], WINdesc);
+						else if (args[4].match(FAILpatt)) addToLexemeTable(args[4], FAILdesc);
 					}
-					else if (tokens[i].match()) {
-						
-					}
-					else if (tokens[i].match()) {
-						
-					}
-					else if (tokens[i].match()) {
-						
-					}
-					else if (tokens[i].match()) {
-						
-					}
-					else if (tokens[i].match()) {
-						
-					}
-					else if (tokens[i].match()) {
-						
-					}
-					else if (tokens[i].match()) {
-						
-					}
-					else if (tokens[i].match()) {
-						
-					}
-
 				}
-
 			}
 		}
 	</script>
