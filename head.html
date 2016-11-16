@@ -1,0 +1,309 @@
+<head>
+	<link href="materialize/css/materialize.css" rel="stylesheet"/>
+	<title>Ang Ganda ni Ma'am Kat LOLterpreter</title>
+	<style>
+		#codeDiv{
+			height: 50vh;
+			padding: 10px;
+		}
+		#codeText{
+			width: 20vw;
+		}
+		#lexemeDiv{
+			overflow-y: scroll;
+			overflow-x: fixed;
+			height: 50vh;
+		}
+		#codeText{
+			height: 30vh;
+		}
+	</style>
+<head>
+<body>
+	<div class="container">
+		<div class="row">
+			<div id="codeDiv" class="col s4">
+				<div>
+					<h5>CODE</h5>
+					<button class="btn small">OPEN FILE</button>
+					<textarea id="codeText"></textarea>
+				</div>
+			</div>
+			<div id="lexemeDiv" class="col s4">
+				<div>
+					<h5>LEXEME TABLE</h5>
+					<table>
+						<thead>
+							<tr>
+								<th>Lexeme</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody id="lexemeTable">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col s4">
+				<div>
+					<h5>SYMBOL TABLE</h5>
+					<table>
+						<thead>
+							<tr>
+								<th>Symbol</th>
+								<th>Description</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container center">
+		<button class="btn" id="executeButton">EXECUTE</button>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div id="consoleDiv" class="col s12 red">
+				<h5>CONSOLE</h5>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var executeButton = document.getElementById("executeButton");
+		var lexemeTable = document.getElementById("lexemeTable");
+		executeButton.onclick = function() {
+		var code = document.getElementById("codeText").value;
+
+			var tokens = code.split("\n");
+			for(var i = 0; i<tokens.length; i++){
+				if(i === 0 && tokens[0] === "HAI"){
+					var tr = document.createElement("tr");
+					var tdLexeme = document.createElement("td");
+					var tnLexeme = document.createTextNode(tokens[0]);
+					tdLexeme.appendChild(tnLexeme);
+					var tdDesc = document.createElement("td");
+					var tnDesc = document.createTextNode("Delimeter to mark the start of the program");
+					tdDesc.appendChild(tnDesc);
+					tr.appendChild(tdLexeme);
+					tr.appendChild(tdDesc);
+
+					lexemeTable.appendChild(tr);
+				}
+				if(i === tokens.length - 1){
+					if(tokens[i] === "KTHXBYE"){
+						var tr = document.createElement("tr");
+						var tdLexeme = document.createElement("td");
+						var tnLexeme = document.createTextNode(tokens[i]);
+						tdLexeme.appendChild(tnLexeme);
+						var tdDesc = document.createElement("td");
+						var tnDesc = document.createTextNode("Delimeter to mark the end of the program");
+						tdDesc.appendChild(tnDesc);
+						tr.appendChild(tdLexeme);
+						tr.appendChild(tdDesc);
+
+						lexemeTable.appendChild(tr);
+					}
+				}
+				if(i !== 0 && i !== tokens.length){
+					// patterns
+
+					const BTWpatt = /^BTW .*$/;
+					const OBTWpatt = /^OBTW .*TLDR$/m;
+					const VAR_DEC = /^I HAS A \w+$/;
+					const VARIABLE_NAME = /^\D$/;
+					const VAR_DEC_WITH_INIT_LITERAL = /I HAS A \w+ ITZ .+$/;
+					const VISIBLEpatt = /^VISIBLE ("?.*"?|\w*)$/;
+					const GIMMEHpatt = /^GIMMEH$/;
+					
+					const YARNLiteral = /".*"/;
+					const NUMBRLiteral = /\d+/;
+					const NUMBARLiteral = /\d+.\d+/;
+					const TROOFTrueLiteral = /WIN/;
+					const TROOFFalseLiteral = /FALSE/;
+
+					const EQUALITY_KEYWORD = /BOTH SAEM/;
+					const INEQUALITY_KEYWORD = /DIFFRINT/;
+					const MORE_ARGS = /AN/;
+					const EQUALITY = /BOTH SAEM \w+ AN \w+/;
+					const EQUALITY_MANY_ARGS = /BOTH SAEM \w+ AN \w (AN \w)* MKAY/;
+					const INEQUALITY = /DIFFRINT \w+ AN \w+/;
+					const INEQUALITY_MANY_ARGS = /DIFFRINT \w+ AN \w (AN \w)* MKAY/;
+
+					if (tokens[i].match(VISIBLEpatt)) {
+						var tr1 = document.createElement("tr");
+						var tr2 = document.createElement("tr");
+
+						var tdLexeme = document.createElement("td");
+						var tnLexeme = document.createTextNode("VISIBLE");
+						tdLexeme.appendChild(tnLexeme);
+
+						var tdDesc = document.createElement("td");
+						var tnDesc = document.createTextNode("Prints a string to the output stream");
+						tdDesc.appendChild(tnDesc);
+
+						var toShow = tokens[i].slice(8);
+						var tdLiteral = document.createElement("td");
+
+						var tdLiDesc = document.createElement("td");
+
+						lexemeTable.appendChild(tr1);
+
+						if(toShow.match(YARNLiteral)){
+							toShow = toShow.substring(1, (toShow.length-1));
+							var tnLiteral = document.createTextNode(toShow);
+							tdLiteral.appendChild(tnLiteral);
+							var tnLiDesc = document.createTextNode("String Literal");
+							tdLiDesc.appendChild(tnLiDesc);
+
+							var tdQuote = document.createElement("td");
+							var tnQuote = document.createTextNode("\"");
+							tdQuote.appendChild(tnQuote);
+							var tdQuDesc = document.createElement("td");
+							var tnQuDesc = document.createTextNode("String Delimiter");
+							tdQuDesc.appendChild(tnQuDesc);
+							var tr3 = document.createElement("tr");
+
+							tr1.appendChild(tdLexeme);
+							tr1.appendChild(tdDesc);
+							tr2.appendChild(tdLiteral);
+							tr2.appendChild(tdLiDesc);
+							tr3.appendChild(tdQuote);
+							tr3.appendChild(tdQuDesc);
+
+							var tr4 = tr3.cloneNode(true);
+
+							lexemeTable.appendChild(tr3);
+							lexemeTable.appendChild(tr2);
+							lexemeTable.appendChild(tr4);
+						}
+						else{
+							var tnLiteral = document.createTextNode(toShow);
+							tdLiteral.appendChild(tnLiteral);
+							var tnLiDesc = document.createTextNode("Variable Expression");
+							tdLiDesc.appendChild(tnLiDesc);
+
+							tr1.appendChild(tdLexeme);
+							tr1.appendChild(tdDesc);
+							tr2.appendChild(tdLiteral);
+							tr2.appendChild(tdLiDesc);
+
+							lexemeTable.appendChild(tr2);
+						}
+
+					}
+					else if (tokens[i].match(GIMMEHpatt)) {
+						var tr = document.createElement("tr");
+						var tdLexeme = document.createElement("td");
+						var tnLexeme = document.createTextNode(tokens[i]);
+						tdLexeme.appendChild(tnLexeme);
+						var tdDesc = document.createElement("td");
+						var tnDesc = document.createTextNode("Reads a string from the input stream into the variable");
+						tdDesc.appendChild(tnDesc);
+						tr.appendChild(tdLexeme);
+						tr.appendChild(tdDesc);
+
+						lexemeTable.appendChild(tr);
+					}
+					else if (tokens[i].match(BTWpatt)) {
+						var tr1 = document.createElement("tr");
+						var tdLexeme = document.createElement("td");
+						var tnLexeme = document.createTextNode("BTW");
+						tdLexeme.appendChild(tnLexeme);
+
+						var tdDesc = document.createElement("td");
+						var tnDesc = document.createTextNode("Indicates the start of a single-line comment");
+						tdDesc.appendChild(tnDesc);
+
+
+						var toShow = tokens[i].slice(4);
+						var tr2 = document.createElement("tr");
+						var tdLiteral = document.createElement("td");
+						var tnLiteral = document.createTextNode(toShow);
+						tdLiteral.appendChild(tnLiteral);
+
+
+						var tr2 = document.createElement("tr");
+						var tdLiDesc = document.createElement("td");
+						var tnLiDesc = document.createTextNode("Single-line comment");
+						tdLiDesc.appendChild(tnLiDesc);
+
+						tr1.appendChild(tdLexeme);
+						tr1.appendChild(tdDesc);
+						tr2.appendChild(tdLiteral);
+						tr2.appendChild(tdLiDesc);
+
+						lexemeTable.appendChild(tr1);
+						lexemeTable.appendChild(tr2);
+					}
+					else if (tokens[i].match(EQUALITY)) {
+						var tr1 = document.createElement("tr");
+						var tr2 = document.createElement("tr");
+						var tr3 = document.createElement("tr");
+						var tr4 = document.createElement("tr");
+
+						var tdLexeme = document.createElement("td");
+						var tnLexeme = document.createTextNode("BOTH SAEM");
+						tdLexeme.appendChild(tnLexeme);
+
+						var tdDesc = document.createElement("td");
+						var tnDesc = document.createTextNode("Comparison operator for equality");
+						tdDesc.appendChild(tnDesc);
+
+						tr1.appendChild(tdLexeme);
+						tr1.appendChild(tdDesc);
+
+						lexemeTable.appendChild(tr1);
+
+						var toShow = tokens[i].slice(9);
+						toShow = toShow.split(" ");
+
+						for (var i = 0; i < toShow.length; i++) {
+							var tdDesc = document.createElement("td");
+							if (toShow[i].match(YARNLiteral)) {
+								var tnDesc = 
+							}
+							tdDesc.appendChild(tnDesc);
+						}
+
+					}
+					else if (tokens[i].match(INEQUALITY)) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+					else if (tokens[i].match()) {
+						
+					}
+
+				}
+
+			}
+		}
+	</script>
+</body>
