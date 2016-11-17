@@ -1,0 +1,49 @@
+// LEXEMES AND DESCRIPTION
+
+const HAIlex = "HAI";
+const HAIdesc = "Delimeter to mark the start of the program";
+const KTHXBYElex = "KTHXBYE";
+const KTHXBYEdesc = "Delimeter to mark the end of the program";
+const BTWlex = "BTW";
+const BTWdesc = "Indicates the start of a single-line comment";
+const OBTWlex = "BTW";
+const OBTWdesc = "Indicates the start of a multi-line comment";
+const TLDRlex = "TLDR";
+const TLDRdesc = "Indicates the end of a multi-line comment"
+const IHASAlex = "I HAS A";
+const IHASAdesc = "Declares a variable without an initial value";
+const ITZlex = "ITZ";
+const ITZdesc = "Assigns a value to a variable immediately after its declaration";
+const Rlex = "R";
+const Rdesc = "Assigns a value to a variable";
+const VISIBLElex = "VISIBLE";
+const VISIBLEdesc = "Prints a string to the output stream";
+const GIMMEHlex = "GIMMEH";
+const GIMMEHdesc = "Reads a string from the input stream into the variable";
+const SMOOSHlex = "SMOOSH";
+const SMOOSHdesc = "Concatenates the given YARNs";
+const MKAYlex = "MKAY";
+const MKAYdesc = "Delimiter to mark the end of a list of arguments";
+const ANlex = "AN";
+const ANdesc = "Indicates that there are more arguments for a certain operation";
+
+const BOTHSAEMlex = "BOTH SAEM";
+const BOTHSAEMdesc = "Comparison operator for equality";
+const DIFFRINTlex = "DIFFRINT";
+const DIFFRINTdesc = "Comparison operator for inequality"
+const BIGGROFlex = "BIGGR OF";
+const BIGGROFdesc = "Comparison operator that returns the argument with the larger/ largest value from the list arguments";
+const SMALLROFlex = "SMALLR OF";
+const SMALLROFdesc = "Comparison operator that returns the argument with the smaller/ smallest value from the list arguments";
+
+const WTFlex = "WTF?";
+const OIClex = "OIC";
+
+
+// LITERALS AND DELIMITERS
+
+const YARNLiteraldesc = "String Literal";
+const YARNDelimiterdesc = "String Delimiter"
+const YARNDelimiterlex = "\"";
+const COMMENTLiteraldesc = "Single-line comment";
+const VARIABLEdesc = "Variable Expression";
