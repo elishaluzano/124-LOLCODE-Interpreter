@@ -80,17 +80,26 @@
 			newtbody.id = "lexemeTable";
 			lexemeTable.parentNode.replaceChild(newtbody, lexemeTable);
 		}
+		function verifyFile(filename) {
+			return (filename.split('.').pop() === "lol");
+		}
 		function loadCode(e) {
 			var file = e.target.files[0];
 			if (!file) {
 				alert("Can not read file");
 			}
-			var reader = new FileReader();
- 			reader.onload = function(e) {
-				var contents = e.target.result;
-				document.getElementById("codeText").value = contents;
-			};
-  			reader.readAsText(file);
+			else if (!verifyFile(file.name)) {
+				alert("Invalid file. Please upload file with .lol extension.");
+				document.getElementById("codeFile").value = "";
+			}
+			else {
+				var reader = new FileReader();
+		 		reader.onload = function(e) {
+					var contents = e.target.result;
+					document.getElementById("codeText").value = contents;
+				};
+		  			reader.readAsText(file);
+			}			
 		}
 		document.getElementById('codeFile').addEventListener('change', loadCode, false);
 		executeButton.onclick = function() {
@@ -110,7 +119,7 @@
 					tr.appendChild(tdDesc);
 					lexemeTable.appendChild(tr);
 				}
-			var tokens = code.split("\n");
+
 			// LEXEMES AND DESCRIPTION
 			const HAIlex = "HAI";
 			const HAIdesc = "Delimeter to mark the start of the program";
@@ -128,6 +137,8 @@
 			const ITZdesc = "Assigns a value to a variable immediately after its declaration";
 			const Rlex = "R";
 			const Rdesc = "Assigns a value to a variable";
+			const YRlex = "YR";
+			const YRdesc = "Declaring arguments for a function";
 			const MAEKlex = "MAEK";
 			const MAEKdesc = "Operator that explicitly casts an expression’s value";
 			const ISNOWAlex = "IS NOW A";
@@ -150,8 +161,32 @@
 			const BIGGROFdesc = "Comparison operator that returns the argument with the larger/ largest value from the list arguments";
 			const SMALLROFlex = "SMALLR OF";
 			const SMALLROFdesc = "Comparison operator that returns the argument with the smaller/ smallest value from the list arguments";
-			const WTFlex = "WTF?";
-			const OIClex = "OIC";
+			const IMOUTTAYRlex = "IM OUTTA YR";
+			const IMOUTTAYRdesc = "Delimiter to mark the end of a loop";
+			const UPPINlex = "UPPIN";
+			const UPPINdesc = "Iterates over a loop increasingly";
+			const NERFINlex = "NERFIN";
+			const NERFINdesc = "Iterates over a loop decreasingly";
+			const TILlex = "TIL";
+			const TILdesc = "Indicates that the loop will execute until the expression evaluates to WIN (true)";
+			const WILElex = "WILE";
+			const WILEdesc = "Indicates that the loop will execute while the expression evaluates to WIN (true)";
+			const HOWIZIlex = "HOW IZ I";
+			const HOWIZIdesc = "Delimiter to mark the start of a function block";
+			const IFUSAYSOlex = "IF U SAY SO";
+			const IFUSAYSOdesc = "Delimiter to mark the end of a function block";
+			const FOUNDYRlex = "FOUND YR";
+			const FOUNDYRdesc = "Returns the value of the expression";
+			const IIZlex = "I IZ";
+			const IIZdesc = "Function call";
+			const OMGWTFlex = "OMG WTF";
+			const OMGWTFdesc = "Default case in a WTF? expression";
+			const BUKKITlex = "BUKKIT";
+			const BUKKITdesc = "Indicates an array";
+			const CANHASlex = "CAN HAS";
+			const CANHASdesc = "Includes a library to the code";
+			const LIEKAlex = "LIEK A";
+			const LIEKAdesc = "Copies the value of a variable to a newly declared variable";
 			const WINlex = "WIN";
 			const WINdesc = "Boolean value for true";
 			const FAILlex = "FAIL";
@@ -164,52 +199,100 @@
 			const NUMBARdesc = "Floating-point Literal";
 			const COMMENTLiteraldesc = "Single-line comment";
 			const VARIABLEdesc = "Variable Expression";
+			const FUNCTIONNAMEdesc = "Function Name";
 			// REGEX
-			const BTWpatt = /^BTW .*$/;
-			const OBTWpatt = /^OBTW .*TLDR$/m;
-			const IHASApatt = /^I HAS A (\w\S*)$/;
-			const VARIABLEpatt = /^\D$/;
-			const IHASAITZpatt = /(I HAS A) (\w\S*) (ITZ) ("?.*"?|\S+)$/;
+			const VARIABLEpatt = /^\D\S*/;
+			const VARDECLARATIONpatt = /^I HAS A (\S+)( (ITZ) ("?.*"?|\w+)$)?$/;
 			const VISIBLEpatt = /^VISIBLE ("?.*"?|\w+)$/;
-			const GIMMEHpatt = /^GIMMEH \w*$/;
+			const GIMMEHpatt = /^GIMMEH \w+$/;
 			const ITZpatt = /^ITZ \w$/;
 			const Rpatt = /^\w* R ("?.*"?|\w*)$/;
 			const SMOOSHMKAYpatt = /^SMOOSH ("?.*"?|\w+) (AN ("?.*"?|\w+))+$/;
 			const COMPARISONpatt = /^(BOTH SAEM|DIFFRINT|BIGGR OF|SMALLR OF) ("?.*"?|\w+) (AN) ("?.*"?|\w+)$/;
 			const WTFpatt = /^WTF\?$/;
 			const OMGpatt = /^OMG ("?.*"?|\w+)$/;	
-			const YARNpatt = /".*"/;
+			const YARNpatt = /".*"$/;
 			const NUMBRpatt = /^-?\d+$/;
 			const NUMBARpatt = /^-?\d+.\d+$/;
 			const WINpatt = /^WIN$/;
 			const FAILpatt = /^FAIL$/;
-			const BOTHSAEMpatt = /BOTH SAEM/;
-			const DIFFRINTpatt = /DIFFRINT/;
-			const BIGGROFpatt = /BIGGR OF/;
-			const SMALLROFpatt = /SMALLR OF/;
-			const ANpatt = /AN/;
-			for(var i = 0; i<tokens.length; i++){
-				if(i === 0 && tokens[0] === "HAI"){
+			const BOTHSAEMpatt = /^BOTH SAEM$/;
+			const DIFFRINTpatt = /^DIFFRINT$/;
+			const BIGGROFpatt = /^BIGGR OF$/;
+			const SMALLROFpatt = /^SMALLR OF$/;
+			const ANpatt = /^AN$/;
+			const IMINYRpatt = /^IM IN YR (\w)$/
+			const IMOUTTAYRpatt = /^IM OUTTA YR (\w)$/;
+			const HOWIZIpatt = /^HOW IZ I (\w) (YR (\w) (AN YR \w)*)?$/;
+			const IFUSAYSOpatt = /^IF U SAY SO$/;
+			const FOUNDYRpatt = /^FOUND YR (\w)$/;
+			const IIZatt = /^I IZ (\w) (YR (\w) (AN YR \w)*)? MKAY$/;
+			const OMGWTFpatt = /^OMG WTF$/;
+			const BUKKITpatt = /^BUKKIT$/;
+			const CANHASpatt = /^CAN HAS (\w)$/;
+			const LIEKApatt = /^LIEK A$/;
+			const YRpatt = /^YR$/;
+			const MKAYpatt = /^MKAY$/;
+			const OBTWTLDRpatt = /^OBTW\s+.+TLDR$/gm;
+			const BTWpatt = /^BTW .*$/g;
+
+			var lines = code.split("\n");
+
+			for(var i = 0; i<lines.length; i++){
+				if(i === 0 && lines[0] === "HAI"){
 					addToLexemeTable(HAIlex, HAIdesc);
 				}
-				if (i === tokens.length - 1 && tokens[i] === "KTHXBYE") {
+				else if (i === lines.length - 1 && lines[i] === "KTHXBYE") {
 					addToLexemeTable(KTHXBYElex, KTHXBYEdesc);
 				}
-				if (i !== 0 && i !== tokens.length){
-					if (tokens[i].match(VISIBLEpatt)) {
+				else if (i !== 0 && i !== lines.length){
+					if (lines[i].match(BTWpatt)) {
+						addToLexemeTable(BTWlex, BTWdesc);
+						var args = lines[i].slice(BTWlex.length+1);
+						addToLexemeTable(args, COMMENTLiteraldesc);
+					}
+					else if (lines[i].match(OBTWTLDRpatt)) {
+						var args = lines[i].match(OBTWTLDRpatt);
+						addToLexemeTable(OBTWlex, OBTWdesc);
+						addToLexemeTable(args[2], COMMENTLiteraldesc);
+						addToLexemeTable(TLDRlex, TLDRdesc);
+					}
+					else if (lines[i].match(VISIBLEpatt)) {
 						addToLexemeTable(VISIBLElex, VISIBLEdesc);
-						var args = tokens[i].slice(VISIBLElex.length);
+						var args = lines[i].slice(VISIBLElex.length+1);
 						if(args.match(YARNpatt)){
 							args = args.substring(1, (args.length-1));
 							addToLexemeTable(YARNdelimiter, YARNDelimiterdesc);
 							addToLexemeTable(args, YARNdesc);
 							addToLexemeTable(YARNDelimiter, YARNDelimiterdesc);
 						}
+						else if (args.match(COMPARISONpatt)) {
+							var args = args.match(COMPARISONpatt);
+							
+							if (args[1].match(BOTHSAEMlex)) addToLexemeTable(BOTHSAEMlex, BOTHSAEMdesc);
+							else if (args[1].match(DIFFRINTlex)) addToLexemeTable(DIFFRINTlex, DIFFRINTdesc);
+							else if (args[1].match(BIGGROFlex)) addToLexemeTable(BIGGROFlex, BIGGROFdesc);
+							else if (args[1].match(SMALLROFlex)) addToLexemeTable(SMALLROFlex, SMALLROFdesc);
+							for (var j = 2; j < args.length; j++) {
+								if(args[j].match(YARNpatt)){
+									var yarn = args[j].substring(1, (args.length-1));
+									addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+									addToLexemeTable(yarn, YARNdesc);
+									addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+								}
+								else if(args[j].match(NUMBRpatt)) addToLexemeTable(args[j], NUMBRdesc);
+								else if(args[j].match(NUMBARpatt)) addToLexemeTable(args[j], NUMBRdesc);
+								else if(args[j].match(WINpatt))	addToLexemeTable(WINlex, WINdesc)
+								else if(args[j].match(FAILpatt)) addToLexemeTable(FAILlex, FAILdesc)
+								else if(args[j].match(ANpatt)) addToLexemeTable(ANlex, ANdesc);
+								else addToLexemeTable(args[j], VARIABLEdesc);
+							}
+						}
 						else addToLexemeTable(args, VARIABLEdesc);
 					}
-					else if (tokens[i].match(GIMMEHpatt)) {
+					else if (lines[i].match(GIMMEHpatt)) {
 						addToLexemeTable(GIMMEHlex, GIMMEHdesc);
-						var args = tokens[i].slice(GIMMEHlex.length);
+						var args = lines[i].slice(GIMMEHlex.length+1);
 						if(args.match(YARNpatt)){
 							args = args.substring(1, (args.length-1));
 							addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
@@ -218,13 +301,8 @@
 						}
 						else addToLexemeTable(args, VARIABLEdesc);
 					}
-					else if (tokens[i].match(BTWpatt)) {
-						addToLexemeTable(BTWlex);
-						var args = tokens[i].slice(GIMMEHlex.length);
-						addToLexemeTable(args, COMMENTLiteraldesc);
-					}
-					else if (tokens[i].match(COMPARISONpatt)) {
-						var args = tokens[i].match(COMPARISONpatt);
+					else if (lines[i].match(COMPARISONpatt)) {
+						var args = lines[i].match(COMPARISONpatt);
 						
 						if (args[1].match(BOTHSAEMlex)) addToLexemeTable(BOTHSAEMlex, BOTHSAEMdesc);
 						else if (args[1].match(DIFFRINTlex)) addToLexemeTable(DIFFRINTlex, DIFFRINTdesc);
@@ -245,21 +323,98 @@
 							else addToLexemeTable(args[j], VARIABLEdesc);
 						}
 					}
-					else if (tokens[i].match(IHASApatt)) {
+					else if (lines[i].match(VARDECLARATIONpatt)) {
 						addToLexemeTable(IHASAlex, IHASAdesc);
-						args = tokens[i].slice(IHASAlex.length);
+						var args = lines[i].slice(IHASAlex.length+1).split(" ");
+						console.log(args);
+
+						for (var j = 0 ; j < args.length; j++) {
+							if (args[j].match(VARIABLEpatt)) addToLexemeTable(args[j], VARIABLEdesc);
+							else if (args[j].match(ITZpatt)) addToLexemeTable(ITZlex, ITZdesc);
+							else if (args[j].match(NUMBRpatt)) addToLexemeTable(args[j], NUMBRdesc);
+							else if (args[j].match(NUMBARpatt)) addToLexemeTable(args[j], NUMBARdesc);
+							else if (args[j].match(WINpatt)) addToLexemeTable(args[j], WINdesc);
+							else if (args[j].match(FAILpatt)) addToLexemeTable(args[j], FAILdesc);
+							else if (args[j].match(COMPARISONpatt)) {
+								var args = args[j].match(COMPARISONpatt);
+								
+								if (args[1].match(BOTHSAEMlex)) addToLexemeTable(BOTHSAEMlex, BOTHSAEMdesc);
+								else if (args[1].match(DIFFRINTlex)) addToLexemeTable(DIFFRINTlex, DIFFRINTdesc);
+								else if (args[1].match(BIGGROFlex)) addToLexemeTable(BIGGROFlex, BIGGROFdesc);
+								else if (args[1].match(SMALLROFlex)) addToLexemeTable(SMALLROFlex, SMALLROFdesc);
+								for (var j = 2; j < args.length; j++) {
+									if(args[j].match(YARNpatt)){
+										var yarn = args[j].substring(1, (args.length-1));
+										addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+										addToLexemeTable(yarn, YARNdesc);
+										addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+									}
+									else if(args[j].match(NUMBRpatt)) addToLexemeTable(args[j], NUMBRdesc);
+									else if(args[j].match(NUMBARpatt)) addToLexemeTable(args[j], NUMBRdesc);
+									else if(args[j].match(WINpatt))	addToLexemeTable(WINlex, WINdesc)
+									else if(args[j].match(FAILpatt)) addToLexemeTable(FAILlex, FAILdesc)
+									else if(args[j].match(ANpatt)) addToLexemeTable(ANlex, ANdesc);
+									else addToLexemeTable(args[j], VARIABLEdesc);
+								}
+							}
+							else addToLexemeTable(args[j], VARIABLEdesc);
+						}
+					}
+					else if (lines[i].match(IMOUTTAYRpatt)) {
+						addToLexemeTable(IMOUTTAYRlex, IMOUTTAYRdesc);
+						var args = lines[i].slice(IMOUTTAYRlex.length+1);
 						addToLexemeTable(args, VARIABLEdesc);
 					}
-					else if (tokens[i].match(IHASAITZpatt)) {
-						var args = tokens[i].match(IHASAITZpatt);
-						addToLexemeTable(IHASAlex, IHASAdesc);
-						addToLexemeTable(args[2], VARIABLEdesc);
-						addToLexemeTable(args[3], ITZdesc);
-						if (args[4].match(NUMBRpatt)) addToLexemeTable(args[4], NUMBRdesc);
-						else if (args[4].match(NUMBARpatt)) addToLexemeTable(args[4], NUMBARdesc);
-						else if (args[4].match(WINpatt)) addToLexemeTable(args[4], WINdesc);
-						else if (args[4].match(FAILpatt)) addToLexemeTable(args[4], FAILdesc);
+					else if (lines[i].match(HOWIZIpatt)) {
+						addToLexemeTable(HOWIZIlex, HOWIZIdesc);
+						var args = token[i].slice(HOWIZIlex.length+1).split(" ");
+						addToLexemeTable(args[0], FUNCTIONNAMEdesc);
+						for (var j = 1; j < args.length; j++) {
+							if (args[j].match(ANpatt)) addToLexemeTable(ANlex, ANdesc);
+							else if (args[j].match(YRpatt)) addToLexemeTable(YRlex, YRdesc);
+						}
 					}
+					else if (lines[i].match(IIZatt)) {
+						addToLexemeTable(IIZlex, IIZdesc);
+						for (var j = 1; j < args.length; j++) {
+							if (args[j].match(ANpatt)) addToLexemeTable(ANlex, ANdesc);
+							else if (args[j].match(YRpatt)) addToLexemeTable(YRlex, YRdesc);
+							else if (args[j].match(MKAYpatt)) addToLexemeTable(MKAYlex, MKAYdesc);
+						}
+					}
+					else if (lines[i].match(IFUSAYSOpatt)) {
+						addToLexemeTable(IFUSAYSOlex, IFUSAYSOdesc);
+					}
+					else if (lines[i].match(FOUNDYRpatt)) {
+						addToLexemeTable(FOUNDYRpatt, FOUNDYRdesc);
+						args = token[i].slice(HOWIZIlex.length+1).split(" ");
+						if (lines[i].match(COMPARISONpatt)) {
+							var args = lines[i].match(COMPARISONpatt);
+							
+							if (args[1].match(BOTHSAEMlex)) addToLexemeTable(BOTHSAEMlex, BOTHSAEMdesc);
+							else if (args[1].match(DIFFRINTlex)) addToLexemeTable(DIFFRINTlex, DIFFRINTdesc);
+							else if (args[1].match(BIGGROFlex)) addToLexemeTable(BIGGROFlex, BIGGROFdesc);
+							else if (args[1].match(SMALLROFlex)) addToLexemeTable(SMALLROFlex, SMALLROFdesc);
+							for (var j = 2; j < args.length; j++) {
+								if(args[j].match(YARNpatt)){
+									var yarn = args[j].substring(1, (args.length-1));
+									addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+									addToLexemeTable(yarn, YARNdesc);
+									addToLexemeTable(YARNDelimiterlex, YARNDelimiterdesc);
+								}
+								else if(args[j].match(NUMBRpatt)) addToLexemeTable(args[j], NUMBRdesc);
+								else if(args[j].match(NUMBARpatt)) addToLexemeTable(args[j], NUMBRdesc);
+								else if(args[j].match(WINpatt))	addToLexemeTable(WINlex, WINdesc)
+								else if(args[j].match(FAILpatt)) addToLexemeTable(FAILlex, FAILdesc)
+								else if(args[j].match(ANpatt)) addToLexemeTable(ANlex, ANdesc);
+								else addToLexemeTable(args[j], VARIABLEdesc);
+							}
+						}
+					}
+					else if (lines[i].match(OMGWTFpatt)) {
+						addToLexemeTable(OMGWTFlex, OMGWTFdesc);
+					}
+					// else if (lines)
 				}
 			}
 		}
