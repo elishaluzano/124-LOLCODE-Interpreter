@@ -226,7 +226,7 @@
 			const HOWIZIpatt = /^HOW IZ I (\w) (YR (\w) (AN YR \w)*)?$/;
 			const IFUSAYSOpatt = /^IF U SAY SO$/;
 			const FOUNDYRpatt = /^FOUND YR (\w)$/;
-			const IIZatt = /^I IZ (\w) (YR (\w) (AN YR \w)*)? MKAY$/;
+			const IIZpatt = /^I IZ (\w) (YR (\w) (AN YR \w)*)? MKAY$/;
 			const OMGWTFpatt = /^OMG WTF$/;
 			const BUKKITpatt = /^BUKKIT$/;
 			const CANHASpatt = /^CAN HAS (\w)$/;
@@ -239,10 +239,10 @@
 			var lines = code.split("\n");
 
 			for(var i = 0; i<lines.length; i++){
-				if(i === 0 && lines[0] === "HAI"){
+				if(i === 0 && lines[0] === HAIlex){
 					addToLexemeTable(HAIlex, HAIdesc);
 				}
-				else if (i === lines.length - 1 && lines[i] === "KTHXBYE") {
+				else if (i === lines.length - 1 && lines[i] === KTHXBYElex) {
 					addToLexemeTable(KTHXBYElex, KTHXBYEdesc);
 				}
 				else if (i !== 0 && i !== lines.length){
@@ -326,7 +326,6 @@
 					else if (lines[i].match(VARDECLARATIONpatt)) {
 						addToLexemeTable(IHASAlex, IHASAdesc);
 						var args = lines[i].slice(IHASAlex.length+1).split(" ");
-						console.log(args);
 
 						for (var j = 0 ; j < args.length; j++) {
 							if (args[j].match(VARIABLEpatt)) addToLexemeTable(args[j], VARIABLEdesc);
@@ -374,7 +373,7 @@
 							else if (args[j].match(YRpatt)) addToLexemeTable(YRlex, YRdesc);
 						}
 					}
-					else if (lines[i].match(IIZatt)) {
+					else if (lines[i].match(IIZpatt)) {
 						addToLexemeTable(IIZlex, IIZdesc);
 						for (var j = 1; j < args.length; j++) {
 							if (args[j].match(ANpatt)) addToLexemeTable(ANlex, ANdesc);
@@ -414,7 +413,24 @@
 					else if (lines[i].match(OMGWTFpatt)) {
 						addToLexemeTable(OMGWTFlex, OMGWTFdesc);
 					}
-					// else if (lines)
+					else if (lines[i].match(HOWIZIpatt)) {
+						addToLexemeTable(HOWIZIlex, HOWIZIdesc);
+					}
+					else if (line[i].match(IFUSAYSOpatt)) {
+						addToLexemeTable(IFUSAYSOlex, IFUSAYSOdesc);
+					}
+					else if (lines[i].match(IIZpatt)) {
+						addToLexemeTable(IIZlex, IIZdesc);
+					}
+					else if (lines[i].match(OMGWTFpatt)) {
+						addToLexemeTable(OMGWTFlex, OMGWTFdesc);
+					}
+					else if (lines[i].match(BUKKITpatt)) {
+						addToLexemeTable(BUKKITlex, BUKKITdesc);
+					}
+					else if (lines[i].match(CANHASpatt)) {
+						addToLexemeTable(CANHASlex, CANHASdesc);
+					}
 				}
 			}
 		}
